@@ -1,0 +1,14 @@
+services:
+  ib-gateway:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "4001:4001"   # live trading API
+      - "4002:4002"   # paper trading API
+      - "5900:5900"   # VNC (x11vnc)
+    volumes:
+      - ib-settings:/root/Jts    # persist IB Gateway settings across restarts
+
+volumes:
+  ib-settings:

@@ -1,0 +1,41 @@
+# IBC Configuration — rendered at container start from environment variables.
+# See config.ini.example for full documentation of each setting.
+
+# === Authentication ===
+IbLoginId=${IB_USERNAME}
+IbPassword=${IB_PASSWORD}
+
+# === Trading Mode ===
+# live or paper
+TradingMode=${IB_TRADING_MODE}
+
+# === Auto-restart ===
+# Daily restart time (local timezone). Gateway closes and reopens without
+# needing to re-enter credentials. On Sundays, a ColdRestart happens instead
+# to satisfy IBKR's weekly full-logout requirement — manual 2FA is needed.
+AutoRestartTime=11:45 PM
+ColdRestartTime=13:00
+
+# === Connection Handling ===
+# Automatically accept incoming API connections (needed for headless use)
+AcceptIncomingConnectionAction=accept
+
+# Confirm paper trading warning automatically
+AcceptNonBrokerageAccountWarning=yes
+
+# Retry 2FA authentication if it times out (e.g. missed mobile notification)
+ReloginAfterSecondFactorAuthenticationTimeout=yes
+
+# === Startup Behaviour ===
+StoreSettingsOnServer=no
+MinimizeMainWindow=no
+ReadOnlyLogin=no
+ReadOnlyApi=no
+
+# === Safety ===
+AllowBlindTrading=no
+
+# === Misc ===
+FIX=no
+SuppressInfoMessages=yes
+ExistingSessionDetectedAction=primary

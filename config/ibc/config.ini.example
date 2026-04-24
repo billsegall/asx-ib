@@ -1,0 +1,40 @@
+# IBC Configuration Example
+# Copy to config.ini and fill in real credentials (never commit config.ini).
+# Full documentation: https://github.com/IbcAlpha/IBC/blob/master/userguide.md
+
+# === Authentication ===
+IbLoginId=your_ibkr_username
+IbPassword=your_ibkr_password
+
+# === Trading Mode ===
+# live  — connect to live account (port 4001)
+# paper — connect to paper account (port 4002)
+TradingMode=live
+
+# === Auto-restart ===
+# AutoRestartTime: daily restart (no re-login required Mon–Sat)
+# ColdRestartTime: Sunday full restart (triggers 2FA via IBKR Mobile)
+#   Must be after 01:00 US/Eastern in your local timezone.
+#   AEST is UTC+10 (UTC+11 during daylight saving).
+#   01:00 ET = 16:00 AEST (standard) / 17:00 AEDT — use 17:30 to be safe.
+AutoRestartTime=11:45 PM
+ColdRestartTime=17:30
+
+# === Connection Handling ===
+AcceptIncomingConnectionAction=accept
+AcceptNonBrokerageAccountWarning=yes
+ReloginAfterSecondFactorAuthenticationTimeout=yes
+
+# === Startup Behaviour ===
+StoreSettingsOnServer=no
+MinimizeMainWindow=no
+ReadOnlyLogin=no
+ReadOnlyApi=no
+
+# === Safety ===
+AllowBlindTrading=no
+
+# === Misc ===
+FIX=no
+SuppressInfoMessages=yes
+ExistingSessionDetectedAction=primary

@@ -1,0 +1,4 @@
+.env
+config/ibc/config.ini
+*.log
+__pycache__/
