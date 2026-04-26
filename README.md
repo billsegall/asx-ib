@@ -72,10 +72,18 @@ On first launch, connect via VNC and:
 1. **Log in** — IBC will pre-fill your credentials; click Login
 2. **Enable API** — Configure → Settings → API → Enable ActiveX and Socket Clients
 3. **Set socket port** — Configure → Settings → API → Socket port: `4001`
-4. **Trust localhost** — Configure → Settings → API → Trusted IPs: `127.0.0.1`
+4. **Uncheck "Allow connections from localhost only"** — Configure → Settings → API → uncheck this box, then add the Docker gateway IP (usually `172.18.0.1`) to Trusted IPs. Without this, host→container connections are silently rejected regardless of the TrustedIPs list.
 5. **Verify auto-restart** — Configure → Lock and Exit → Auto Restart enabled
 
 These settings are persisted in the `ib-settings` Docker volume.
+
+### Host connectivity (Docker bridge networking)
+
+The container runs on Docker bridge networking. Connections from the host appear inside the container as the Docker gateway IP (`172.18.0.1` on default bridge, or check `ip route` inside the container).
+
+`entrypoint.sh` automatically detects this IP and pre-seeds `jts.ini` with it in `TrustedIPs` before IBC starts. This handles fresh volume scenarios where jts.ini doesn't exist yet. For existing volumes, add the IP via the Gateway UI (Configure → Settings → API → Trusted IPs → Create).
+
+**Key setting:** "Allow connections from localhost only" (Configure → Settings → API) must be **unchecked**. This overrides TrustedIPs completely — if checked, only `127.0.0.1` can connect regardless of what's in the list.
 
 ## Auto-Restart Behaviour
 
@@ -174,6 +182,20 @@ docker load < ib-gateway.tar.gz
 ```
 
 Copy `.env` and `docker-compose.yml` to the target. The `ib-settings` volume starts empty — reconfigure Gateway settings via VNC on first run.
+
+## ASX Data Integration
+
+The `asx-data` pipeline uses this Gateway for three purposes:
+
+| Use | Script | Frequency |
+|-----|--------|-----------|
+| Warrant metadata (expiry, strike, underlying) | `fetch_options_ib.py` | Weekly Sun 6am AEST |
+| Warrant EOD closing prices | `fetch_options_eod.py` | Weekdays 4pm AEST |
+| Live stock/warrant prices | `asx-web /api/ibgw/*` | On-demand during market hours |
+
+**Symbol mapping:** IB's `localSymbol` field equals the ASX warrant code exactly (e.g. `ACWOC`, `EXROB`). Scripts query IB by underlying symbol (e.g. `reqContractDetails(symbol='ACW', secType='WAR')`) and match results by `localSymbol`. This is how multiple warrants on the same underlying are disambiguated.
+
+**Market data types:** Scripts call `reqMarketDataType(1)` (live data). IB falls back to delayed automatically when market is closed or the account lacks a live data subscription.
 
 ## Architecture
 

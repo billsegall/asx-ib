@@ -12,11 +12,15 @@ RUN apt-get update && apt-get install -y \
     wget \
     unzip \
     socat \
+    telnet \
     curl \
     gettext-base \
     libxtst6 \
     libxrender1 \
     libxi6 \
+    x11-apps \
+    xdotool \
+    iproute2 \
     && rm -rf /var/lib/apt/lists/*
 
 # Install IB Gateway (quiet mode installs to /usr/local/ibgateway)
@@ -39,7 +43,8 @@ RUN wget -q "https://github.com/IbcAlpha/IBC/releases/download/${IBC_VERSION}/IB
     -O /tmp/ibc.zip \
     && unzip -q /tmp/ibc.zip -d /opt/ibc \
     && chmod +x /opt/ibc/*.sh /opt/ibc/scripts/*.sh \
-    && rm /tmp/ibc.zip
+    && rm /tmp/ibc.zip \
+    && ln -s /bin/telnet /usr/local/bin/telnet
 
 # Copy configuration and scripts
 COPY config/ /config/
