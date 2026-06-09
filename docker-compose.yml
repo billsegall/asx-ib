@@ -5,10 +5,22 @@ services:
     env_file: .env
     ports:
       - "4001:4001"   # live trading API
-      - "4002:4002"   # paper trading API
       - "5900:5900"   # VNC (x11vnc)
     volumes:
       - ib-settings:/root/Jts    # persist IB Gateway settings across restarts
 
+  ib-gateway-paper:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      IB_TRADING_MODE: paper
+    ports:
+      - "4002:4002"   # paper trading API
+      - "5901:5900"   # VNC (x11vnc) for paper instance
+    volumes:
+      - ib-settings-paper:/root/Jts
+
 volumes:
   ib-settings:
+  ib-settings-paper:
