@@ -107,11 +107,8 @@ To change restart times, edit `config/ibc/config.ini.tmpl` and rebuild.
 ## Building
 
 ```bash
-# Standard build (latest IB Gateway + IBC 3.23.0)
+# Standard build (latest IB Gateway + IBC 3.24.2)
 docker compose build
-
-# Pin a specific IBC version
-docker build --build-arg IBC_VERSION=3.22.0 .
 
 # Force fresh IB Gateway download
 docker compose build --no-cache
@@ -126,9 +123,16 @@ docker compose build --no-cache
 docker compose up -d
 ```
 
+Keep the running image as a rollback first (`docker tag asx-ib-ib-gateway:latest
+asx-ib-ib-gateway:<version>`); the build fails if it can't find the installed
+gateway's version.
+
 ### Update IBC
-Change `IBC_VERSION` in `Dockerfile` to the desired version and rebuild.
-Current version: **3.23.0** — check [IBC releases](https://github.com/IbcAlpha/IBC/releases) for newer.
+The IBC release zip lives in `vendor/` (GitHub's release download link has been
+unreliable). To update: download `IBCLinux-<version>.zip` from
+[IBC releases](https://github.com/IbcAlpha/IBC/releases) into `vendor/`, and set
+`IBC_VERSION` and `IBC_SHA256` (GitHub lists each asset's sha256) in `Dockerfile`.
+Current version: **3.24.2** (needed for IB Gateway 10.48 onwards).
 
 ## Logs
 
