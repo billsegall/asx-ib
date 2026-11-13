@@ -55,6 +55,9 @@ Connect your trading application to `localhost:4001` (live) or `localhost:4002` 
 
 Connect with any VNC client to `localhost:5900`. Use the password set in `VNC_PASSWORD`.
 
+Ports are published on 127.0.0.1 only. From another machine, tunnel first:
+`ssh -L 5900:localhost:5900 harri` then connect to `localhost:5900`.
+
 Recommended clients:
 - **TigerVNC**: `vncviewer localhost:5900`
 - **RealVNC Viewer**: connect to `localhost:5900`
