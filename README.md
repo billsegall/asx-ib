@@ -55,7 +55,9 @@ Connect your trading application to `localhost:4001` (live) or `localhost:4002` 
 
 Connect with any VNC client to `localhost:5900`. Use the password set in `VNC_PASSWORD`.
 
-Ports are published on 127.0.0.1 only. From another machine, tunnel first:
+The API port (4001) is published on 127.0.0.1 only. VNC (5900) is also
+published on the LAN address, so from the home network connect to `10.0.1.1:5900`.
+VNC is unencrypted; from anywhere else, tunnel first:
 `ssh -L 5900:localhost:5900 harri` then connect to `localhost:5900`.
 
 Recommended clients:

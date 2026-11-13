@@ -6,6 +6,7 @@ services:
     ports:
       - "127.0.0.1:4001:4001"   # live trading API
       - "127.0.0.1:5900:5900"   # VNC (x11vnc)
+      - "10.0.1.1:5900:5900"    # VNC from the home LAN (static LAN IP; not Tailscale/IPv6)
     volumes:
       - ib-settings:/root/Jts    # persist IB Gateway settings across restarts
 
