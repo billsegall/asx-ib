@@ -45,7 +45,7 @@ Set these in your `.env` file (never commit this file):
 
 | Port | Protocol | Description |
 |------|----------|-------------|
-| `4001` | TCP | IB Gateway live trading API |
+| `4001` | TCP | IB Gateway live API (read-only) |
 | `4002` | TCP | IB Gateway paper trading API |
 | `5900` | VNC | Remote desktop access |
 
@@ -191,6 +191,47 @@ docker load < ib-gateway.tar.gz
 ```
 
 Copy `.env` and `docker-compose.yml` to the target. The `ib-settings` volume starts empty — reconfigure Gateway settings via VNC on first run.
+
+## Paper Trading
+
+Two gateway services run from `docker-compose.yml`:
+
+| Service | Port | Account | API |
+|---------|------|---------|-----|
+| `ib-gateway` | 4001 | live (`.env`) | **read-only** — orders rejected |
+| `ib-gateway-paper` | 4002 | paper (`.env.paper`) | orders allowed |
+
+`ReadOnlyApi` comes from `IB_READ_ONLY_API`, which the entrypoint defaults to
+`yes`. Only the paper service sets it to `no`. The backend only reads market
+data, so the live gateway loses nothing by being read-only.
+
+The paper account has its own IB username (Client Portal → Settings → Paper
+Trading Account). Put it in `.env.paper` (git-ignored), same keys as `.env`,
+then:
+
+```bash
+vi .env.paper
+docker compose up -d ib-gateway-paper   # VNC on 5901 for first login / 2FA
+```
+
+### `tools/paper_order.py`
+
+```bash
+python3 -m venv .venv && .venv/bin/pip install -r tools/requirements.txt
+.venv/bin/python tools/paper_order.py status
+.venv/bin/python tools/paper_order.py order BHP BUY 10 --limit 45.10            # preview + what-if
+.venv/bin/python tools/paper_order.py order BHP BUY 10 --limit 45.10 --submit   # sends
+.venv/bin/python tools/paper_order.py cancel 12
+```
+
+Guards in code: it connects only to `127.0.0.1:4002` (no host/port option),
+aborts unless every managed account is a paper account (`DU…`), and sends
+nothing without `--submit`. Orders are ASX/AUD, DAY. Tests: `.venv/bin/pytest tools`.
+
+**Policy:** every order — paper included — needs the owner's explicit
+permission first. Claude asks before each `--submit`; the project
+`.claude/settings.local.json` has an `ask` rule on `paper_order` so the
+harness prompts too.
 
 ## ASX Data Integration
 

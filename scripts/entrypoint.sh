@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+# Orders are blocked unless the service explicitly opts out (paper only).
+export IB_READ_ONLY_API=${IB_READ_ONLY_API:-yes}
+
 # Render IBC config from template (substitutes env vars)
 envsubst < /config/ibc/config.ini.tmpl > /config/ibc/config.ini
 chmod 600 /config/ibc/config.ini

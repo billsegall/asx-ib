@@ -13,9 +13,10 @@ services:
   ib-gateway-paper:
     build: .
     restart: unless-stopped
-    env_file: .env
+    env_file: .env.paper          # paper account login (separate username)
     environment:
       IB_TRADING_MODE: paper
+      IB_READ_ONLY_API: "no"      # the only gateway that accepts orders
     ports:
       - "127.0.0.1:4002:4002"   # paper trading API
       - "127.0.0.1:5901:5900"   # VNC (x11vnc) for paper instance

@@ -2,3 +2,5 @@
 config/ibc/config.ini
 *.log
 __pycache__/
+.env.paper
+.venv/

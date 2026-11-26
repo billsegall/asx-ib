@@ -30,7 +30,9 @@ ReloginAfterSecondFactorAuthenticationTimeout=yes
 StoreSettingsOnServer=no
 MinimizeMainWindow=no
 ReadOnlyLogin=no
-ReadOnlyApi=no
+# Read-only API blocks order placement. The entrypoint defaults it to yes;
+# only the paper service sets IB_READ_ONLY_API=no.
+ReadOnlyApi=${IB_READ_ONLY_API}
 
 # === Safety ===
 AllowBlindTrading=no
