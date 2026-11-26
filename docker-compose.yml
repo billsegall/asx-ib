@@ -13,7 +13,10 @@ services:
   ib-gateway-paper:
     build: .
     restart: unless-stopped
-    env_file: .env.paper          # paper account login (separate username)
+    env_file:
+      - .env                      # default: live username with TradingMode=paper
+      - path: .env.paper          # optional override: separate paper username
+        required: false
     environment:
       IB_TRADING_MODE: paper
       IB_READ_ONLY_API: "no"      # the only gateway that accepts orders

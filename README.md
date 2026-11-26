@@ -205,9 +205,10 @@ Two gateway services run from `docker-compose.yml`:
 `yes`. Only the paper service sets it to `no`. The backend only reads market
 data, so the live gateway loses nothing by being read-only.
 
-The paper account has its own IB username (Client Portal → Settings → Paper
-Trading Account). Put it in `.env.paper` (git-ignored), same keys as `.env`,
-then:
+By default the paper service logs in with the `.env` username and
+`TradingMode=paper`. To use the separate paper username instead (Client
+Portal → Settings → Paper Trading Account), put `IB_USERNAME`/`IB_PASSWORD`
+in `.env.paper` (git-ignored, optional; overrides `.env`). Then:
 
 ```bash
 vi .env.paper
@@ -229,9 +230,17 @@ aborts unless every managed account is a paper account (`DU…`), and sends
 nothing without `--submit`. Orders are ASX/AUD, DAY. Tests: `.venv/bin/pytest tools`.
 
 **Policy:** every order — paper included — needs the owner's explicit
-permission first. Claude asks before each `--submit`; the project
-`.claude/settings.local.json` has an `ask` rule on `paper_order` so the
-harness prompts too.
+permission first. Claude asks before each `--submit`. As a backstop, Claude
+Code `ask` rules on `paper_order` (user and project settings) make the
+harness prompt before running it.
+
+The asx-web trade panel (`/api/ibgw/order`, PIN-protected, `IB_TRADING_PORT`
+default 4002) also needs this paper gateway. Because the live API is
+read-only, pointing `IB_TRADING_PORT` at 4001 would be rejected.
+
+The `ReadOnlyApi` change takes effect only after `docker compose build` and a
+restart of `ib-gateway`, which needs a live re-login (2FA) and interrupts IB
+data. Avoid 09:50–10:05 and 15:50–16:05 Sydney (Kronos jobs).
 
 ## ASX Data Integration
 
